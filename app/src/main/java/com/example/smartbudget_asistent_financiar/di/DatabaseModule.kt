@@ -3,6 +3,7 @@ package com.example.smartbudget_asistent_financiar.di
 import android.content.Context
 import androidx.room.Room
 import com.example.smartbudget_asistent_financiar.data.local.SmartBudgetDatabase
+import com.example.smartbudget_asistent_financiar.data.local.dao.BudgetDao
 import com.example.smartbudget_asistent_financiar.data.local.dao.ReceiptDao
 import dagger.Module
 import dagger.Provides
@@ -22,8 +23,13 @@ object DatabaseModule {
             context,
             SmartBudgetDatabase::class.java,
             "smartbudget.db"
-        ).build()
+        )
+        .addMigrations(SmartBudgetDatabase.MIGRATION_1_2)
+        .build()
 
     @Provides
     fun provideReceiptDao(db: SmartBudgetDatabase): ReceiptDao = db.receiptDao()
+
+    @Provides
+    fun provideBudgetDao(db: SmartBudgetDatabase): BudgetDao = db.budgetDao()
 }

@@ -2,13 +2,16 @@ package com.example.smartbudget_asistent_financiar.data.repository
 
 import com.example.smartbudget_asistent_financiar.data.local.dao.ReceiptDao
 import com.example.smartbudget_asistent_financiar.data.local.entity.Receipt
+import com.example.smartbudget_asistent_financiar.data.remote.FirestoreSource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class ReceiptRepository @Inject constructor(private val dao: ReceiptDao) {
-
+class ReceiptRepository @Inject constructor(
+    private val dao: ReceiptDao,
+    private val firestore: FirestoreSource
+) {
     fun getAllReceipts(): Flow<List<Receipt>> = dao.getAllReceipts()
 
     fun getByDateRange(from: Long, to: Long): Flow<List<Receipt>> = dao.getByDateRange(from, to)
@@ -17,11 +20,21 @@ class ReceiptRepository @Inject constructor(private val dao: ReceiptDao) {
 
     suspend fun getById(id: Long): Receipt? = dao.getById(id)
 
-    suspend fun insert(receipt: Receipt): Long = dao.insert(receipt)
+    suspend fun insert(receipt: Receipt): Long {
+        val id = dao.insert(receipt)
+        runCatching { firestore.uploadReceipt(receipt.copy(id = id)) }
+        return id
+    }
 
-    suspend fun update(receipt: Receipt) = dao.update(receipt)
+    suspend fun update(receipt: Receipt) {
+        dao.update(receipt)
+        runCatching { firestore.uploadReceipt(receipt) }
+    }
 
-    suspend fun delete(receipt: Receipt) = dao.delete(receipt)
+    suspend fun delete(receipt: Receipt) {
+        dao.delete(receipt)
+        runCatching { firestore.deleteReceipt(receipt.id) }
+    }
 
     suspend fun getTotalInRange(from: Long, to: Long): Double = dao.getTotalInRange(from, to) ?: 0.0
 }

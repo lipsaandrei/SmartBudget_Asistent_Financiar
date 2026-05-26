@@ -30,4 +30,10 @@ interface ReceiptDao {
 
     @Query("SELECT SUM(totalAmount) FROM receipts WHERE receiptDate BETWEEN :from AND :to")
     suspend fun getTotalInRange(from: Long, to: Long): Double?
+
+    @Query("SELECT * FROM receipts")
+    suspend fun getAllReceiptsOnce(): List<Receipt>
+
+    @Query("DELETE FROM receipts")
+    suspend fun clearAll()
 }

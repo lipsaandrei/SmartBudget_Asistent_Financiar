@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "590367134289",
+    "project_id": "smartbuget-asistentfinanciar",
+    "storage_bucket": "smartbuget-asistentfinanciar.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590367134289:android:29971d2d9cbf5094869e70",
+        "android_client_info": {
+          "package_name": "com.example.smartbudget_asistent_financiar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "590367134289-f19ccd9efqk8vskp4q6494r82bk24ic4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.smartbudget_asistent_financiar",
+            "certificate_hash": "4f11c0e3221a6c2768cf905dd8cb74ac11aef84f"
+          }
+        },
+        {
+          "client_id": "590367134289-hc2o36q7fo6tmetbg6focf1uhjeittk5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRNlRYTFBtwx4gDDFNa2I4I63yNc4blZw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "590367134289-hc2o36q7fo6tmetbg6focf1uhjeittk5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

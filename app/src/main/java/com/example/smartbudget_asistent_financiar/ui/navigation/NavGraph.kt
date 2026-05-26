@@ -3,7 +3,7 @@ package com.example.smartbudget_asistent_financiar.ui.navigation
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -32,11 +32,11 @@ private data class BottomNavItem(val screen: Screen, val label: String, val icon
 private val bottomNavItems = listOf(
     BottomNavItem(Screen.Home, "Home", Icons.Default.Home),
     BottomNavItem(Screen.Scan, "Scan", Icons.Default.PhotoCamera),
-    BottomNavItem(Screen.ReceiptList, "Receipts", Icons.Default.List),
+    BottomNavItem(Screen.ReceiptList, "Receipts", Icons.AutoMirrored.Filled.List),
 )
 
 @Composable
-fun SmartBudgetNavGraph() {
+fun SmartBudgetNavGraph(onSignOut: () -> Unit = {}) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -73,7 +73,12 @@ fun SmartBudgetNavGraph() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(
+                    onReceiptClick = { id ->
+                        navController.navigate(Screen.ReceiptDetail.createRoute(id))
+                    },
+                    onSignOut = onSignOut
+                )
             }
 
             composable(Screen.ReceiptList.route) {
