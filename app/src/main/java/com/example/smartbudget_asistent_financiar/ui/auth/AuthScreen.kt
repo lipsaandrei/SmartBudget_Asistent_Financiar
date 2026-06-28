@@ -28,19 +28,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.smartbudget_asistent_financiar.R
+import com.example.smartbudget_asistent_financiar.ui.components.LanguagePicker
+import com.example.smartbudget_asistent_financiar.ui.language.LanguageViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 
 @Composable
-fun AuthScreen(viewModel: AuthViewModel = hiltViewModel()) {
+fun AuthScreen(
+    viewModel: AuthViewModel = hiltViewModel(),
+    languageViewModel: LanguageViewModel = hiltViewModel()
+) {
     val context = LocalContext.current
     val authState by viewModel.authState.collectAsState()
+    val selectedLanguage by languageViewModel.selectedLanguage.collectAsState()
 
     val googleSignInClient = remember {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -81,19 +88,26 @@ fun AuthScreen(viewModel: AuthViewModel = hiltViewModel()) {
                 )
 
                 Text(
-                    text = "SmartBudget",
+                    text = stringResource(R.string.app_name),
                     style = MaterialTheme.typography.headlineLarge,
                     fontWeight = FontWeight.Bold
                 )
 
                 Text(
-                    text = "Your personal finance assistant",
+                    text = stringResource(R.string.auth_subtitle),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
                 )
 
-                Spacer(modifier = Modifier.height(16.dp))
+                LanguagePicker(
+                    selectedLanguage = selectedLanguage,
+                    onLanguageSelected = {
+                        languageViewModel.setLanguage(it)
+                        (context as? android.app.Activity)?.recreate()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 if (isLoading) {
                     CircularProgressIndicator()
@@ -111,7 +125,7 @@ fun AuthScreen(viewModel: AuthViewModel = hiltViewModel()) {
                         )
                     ) {
                         Text(
-                            text = "Continue with Google",
+                            text = stringResource(R.string.auth_google),
                             style = MaterialTheme.typography.labelLarge,
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
@@ -130,7 +144,7 @@ fun AuthScreen(viewModel: AuthViewModel = hiltViewModel()) {
                 if (!isLoading) {
                     TextButton(onClick = { viewModel.continueAsGuest() }) {
                         Text(
-                            text = "Continue without account",
+                            text = stringResource(R.string.auth_guest),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )

@@ -58,9 +58,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.example.smartbudget_asistent_financiar.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,10 +135,10 @@ private fun PermissionRationale(onRequest: () -> Unit) {
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Camera permission is needed to scan receipts",
+                text = stringResource(R.string.scan_permission_rationale),
                 style = MaterialTheme.typography.bodyLarge
             )
-            Button(onClick = onRequest) { Text("Grant Permission") }
+            Button(onClick = onRequest) { Text(stringResource(R.string.action_grant_permission)) }
         }
     }
 }
@@ -226,7 +228,7 @@ private fun CameraPreviewContent(
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Scan Receipt", color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Text(stringResource(R.string.scan_button), color = MaterialTheme.colorScheme.onPrimaryContainer)
                 }
             }
         }
@@ -261,12 +263,12 @@ private fun ReviewBottomSheet(
                 .padding(bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Review Receipt", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.scan_review_title), style = MaterialTheme.typography.titleLarge)
 
             OutlinedTextField(
                 value = review.merchant,
                 onValueChange = onMerchantChange,
-                label = { Text("Merchant") },
+                label = { Text(stringResource(R.string.label_merchant)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
@@ -274,7 +276,7 @@ private fun ReviewBottomSheet(
             OutlinedTextField(
                 value = review.amount,
                 onValueChange = onAmountChange,
-                label = { Text("Amount (RON)") },
+                label = { Text(stringResource(R.string.label_amount_ron)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
@@ -288,7 +290,7 @@ private fun ReviewBottomSheet(
                     value = review.category,
                     onValueChange = {},
                     readOnly = true,
-                    label = { Text("Category") },
+                    label = { Text(stringResource(R.string.label_category)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded) },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -315,10 +317,10 @@ private fun ReviewBottomSheet(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 OutlinedButton(onClick = onDismiss, modifier = Modifier.weight(1f)) {
-                    Text("Retake")
+                    Text(stringResource(R.string.action_retake))
                 }
                 Button(onClick = onSave, modifier = Modifier.weight(1f)) {
-                    Text("Save")
+                    Text(stringResource(R.string.action_save))
                 }
             }
         }

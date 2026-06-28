@@ -33,6 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import com.example.smartbudget_asistent_financiar.R
 import com.example.smartbudget_asistent_financiar.data.local.entity.Receipt
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -47,7 +49,7 @@ fun ReceiptListScreen(
     val receipts by viewModel.receipts.collectAsState()
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Receipts") }) }
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.nav_receipts)) }) }
     ) { innerPadding ->
         if (receipts.isEmpty()) {
             EmptyReceiptsState(modifier = Modifier.padding(innerPadding))
@@ -83,12 +85,12 @@ private fun EmptyReceiptsState(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "No receipts yet",
+                text = stringResource(R.string.receipts_empty_title),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = "Scan a receipt to get started",
+                text = stringResource(R.string.receipts_empty_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

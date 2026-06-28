@@ -1,5 +1,75 @@
 <resources>
-    <string name="app_name">SmartBudget_Asistent_Financiar</string>
+    <string name="app_name">SmartBudget</string>
     <!-- Replaced by google-services plugin once Google Sign-In is enabled in Firebase console -->
     <string name="default_web_client_id">REPLACE_WITH_WEB_CLIENT_ID</string>
+
+    <!-- Auth -->
+    <string name="auth_subtitle">Your personal finance assistant</string>
+    <string name="auth_google">Continue with Google</string>
+    <string name="auth_guest">Continue without account</string>
+
+    <!-- Common actions -->
+    <string name="action_apply">Apply</string>
+    <string name="action_save">Save</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_sign_out">Sign out</string>
+    <string name="action_sign_in_google">Sign in with Google</string>
+    <string name="action_grant_permission">Grant Permission</string>
+    <string name="action_retake">Retake</string>
+
+    <!-- Common labels -->
+    <string name="label_language">Language</string>
+    <string name="label_merchant">Merchant</string>
+    <string name="label_category">Category</string>
+    <string name="label_date">Date</string>
+    <string name="label_scanned">Scanned</string>
+    <string name="label_raw_ocr">Raw OCR Text</string>
+    <string name="label_amount">Amount (%1$s)</string>
+    <string name="label_amount_ron">Amount (RON)</string>
+    <string name="label_no_limit">No limit</string>
+    <string name="label_spent">Spent: %.2f RON</string>
+
+    <!-- Home -->
+    <string name="home_this_month">This Month</string>
+    <string name="home_start_scanning">Start scanning to track your spending</string>
+    <string name="home_vs_last_month">%1$s%2$d%% vs last month (%3$.2f RON)</string>
+    <string name="home_no_receipts">No receipts yet — tap Scan to add your first one.</string>
+    <string name="section_spending">Spending by Category</string>
+    <string name="section_recent_receipts">Recent Receipts</string>
+
+    <!-- Budget -->
+    <string name="budget_title">Monthly Budget Limits</string>
+    <string name="budget_hint">Leave empty to remove a limit.</string>
+    <string name="budget_alerts_title">Budget Alerts</string>
+    <string name="alert_over_budget">%1$s: %2$.0f%% over budget</string>
+    <string name="alert_budget_used">%1$s: %2$.0f%% of budget used</string>
+
+    <!-- Receipts -->
+    <string name="receipts_empty_title">No receipts yet</string>
+    <string name="receipts_empty_body">Scan a receipt to get started</string>
+
+    <!-- Receipt Detail -->
+    <string name="receipt_title">Receipt</string>
+    <string name="receipt_edit_title">Edit Receipt</string>
+    <string name="receipt_not_found">Receipt not found.</string>
+    <string name="receipt_delete_title">Delete Receipt</string>
+    <string name="receipt_delete_message">This receipt will be permanently deleted.</string>
+
+    <!-- Scan -->
+    <string name="scan_permission_rationale">Camera permission is needed to scan receipts</string>
+    <string name="scan_button">Scan Receipt</string>
+    <string name="scan_review_title">Review Receipt</string>
+
+    <!-- Chat -->
+    <string name="chat_title">AI Assistant</string>
+    <string name="chat_empty_title">Ask me anything about your spending</string>
+    <string name="chat_empty_hint">e.g. \"How much did I spend on food?\" or \"Am I over budget?\"</string>
+    <string name="chat_input_hint">Ask about your finances…</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_scan">Scan</string>
+    <string name="nav_receipts">Receipts</string>
+    <string name="nav_chat">AI Chat</string>
 </resources>

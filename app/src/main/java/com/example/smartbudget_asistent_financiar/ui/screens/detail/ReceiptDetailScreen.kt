@@ -50,6 +50,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.ui.res.stringResource
+import com.example.smartbudget_asistent_financiar.R
 import com.example.smartbudget_asistent_financiar.data.local.entity.Receipt
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -76,7 +78,7 @@ fun ReceiptDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (uiState is DetailUiState.Editing) "Edit Receipt" else "Receipt") },
+                title = { Text(if (uiState is DetailUiState.Editing) stringResource(R.string.receipt_edit_title) else stringResource(R.string.receipt_title)) },
                 navigationIcon = {
                     IconButton(onClick = {
                         if (uiState is DetailUiState.Editing) viewModel.cancelEdit() else onBack()
@@ -130,7 +132,7 @@ fun ReceiptDetailScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        "Receipt not found.",
+                        stringResource(R.string.receipt_not_found),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -160,18 +162,18 @@ fun ReceiptDetailScreen(
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
-            title = { Text("Delete Receipt") },
-            text = { Text("This receipt will be permanently deleted.") },
+            title = { Text(stringResource(R.string.receipt_delete_title)) },
+            text = { Text(stringResource(R.string.receipt_delete_message)) },
             confirmButton = {
                 TextButton(
                     onClick = {
                         showDeleteDialog = false
                         viewModel.delete(onBack)
                     }
-                ) { Text("Delete", color = MaterialTheme.colorScheme.error) }
+                ) { Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error) }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) { Text("Cancel") }
+                TextButton(onClick = { showDeleteDialog = false }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -206,17 +208,17 @@ private fun ReceiptContent(receipt: Receipt, modifier: Modifier = Modifier) {
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                InfoRow("Date", receipt.receiptDate.toFormattedDate())
+                InfoRow(stringResource(R.string.label_date), receipt.receiptDate.toFormattedDate())
                 HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
-                InfoRow("Category", receipt.category)
+                InfoRow(stringResource(R.string.label_category), receipt.category)
                 HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
-                InfoRow("Scanned", receipt.scannedAt.toFormattedDateTime())
+                InfoRow(stringResource(R.string.label_scanned), receipt.scannedAt.toFormattedDateTime())
             }
         }
 
         if (receipt.rawOcrText.isNotBlank()) {
             Text(
-                text = "Raw OCR Text",
+                text = stringResource(R.string.label_raw_ocr),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -254,7 +256,7 @@ private fun ReceiptEditContent(
         OutlinedTextField(
             value = draft.merchant,
             onValueChange = onMerchantChange,
-            label = { Text("Merchant") },
+            label = { Text(stringResource(R.string.label_merchant)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             textStyle = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
@@ -263,7 +265,7 @@ private fun ReceiptEditContent(
         OutlinedTextField(
             value = draft.amount,
             onValueChange = onAmountChange,
-            label = { Text("Amount (${receipt.currency})") },
+            label = { Text(stringResource(R.string.label_amount, receipt.currency)) },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -281,7 +283,7 @@ private fun ReceiptEditContent(
                 value = draft.category,
                 onValueChange = {},
                 readOnly = true,
-                label = { Text("Category") },
+                label = { Text(stringResource(R.string.label_category)) },
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = dropdownExpanded) },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -308,9 +310,9 @@ private fun ReceiptEditContent(
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
-                InfoRow("Date", receipt.receiptDate.toFormattedDate())
+                InfoRow(stringResource(R.string.label_date), receipt.receiptDate.toFormattedDate())
                 HorizontalDivider(modifier = Modifier.padding(vertical = 10.dp))
-                InfoRow("Scanned", receipt.scannedAt.toFormattedDateTime())
+                InfoRow(stringResource(R.string.label_scanned), receipt.scannedAt.toFormattedDateTime())
             }
         }
     }

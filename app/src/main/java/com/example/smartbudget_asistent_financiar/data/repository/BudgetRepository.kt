@@ -23,4 +23,10 @@ class BudgetRepository @Inject constructor(
         dao.deleteByCategory(category)
         runCatching { firestore.deleteBudget(category) }
     }
+
+    suspend fun getByCategory(category: String): com.example.smartbudget_asistent_financiar.data.local.entity.Budget? =
+        dao.getByCategory(category)
+
+    suspend fun getAllBudgetsOnce(): List<com.example.smartbudget_asistent_financiar.data.local.entity.Budget> =
+        dao.getAllBudgetsOnce()
 }

@@ -4,6 +4,7 @@ sealed class Screen(val route: String) {
     object Home : Screen("home")
     object ReceiptList : Screen("receipts")
     object Scan : Screen("scan")
+    object Chat : Screen("chat")
     object ReceiptDetail : Screen("receipt/{receiptId}") {
         fun createRoute(receiptId: Long) = "receipt/$receiptId"
     }

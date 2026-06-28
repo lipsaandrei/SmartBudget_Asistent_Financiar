@@ -37,4 +37,10 @@ class ReceiptRepository @Inject constructor(
     }
 
     suspend fun getTotalInRange(from: Long, to: Long): Double = dao.getTotalInRange(from, to) ?: 0.0
+
+    suspend fun getCategoryTotalInRange(category: String, from: Long, to: Long): Double =
+        dao.getCategoryTotalInRange(category, from, to) ?: 0.0
+
+    suspend fun getAllReceiptsOnce(): List<com.example.smartbudget_asistent_financiar.data.local.entity.Receipt> =
+        dao.getAllReceiptsOnce()
 }

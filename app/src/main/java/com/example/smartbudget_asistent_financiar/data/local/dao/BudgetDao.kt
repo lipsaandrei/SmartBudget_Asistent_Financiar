@@ -22,6 +22,9 @@ interface BudgetDao {
     @Query("SELECT * FROM budgets")
     suspend fun getAllBudgetsOnce(): List<Budget>
 
+    @Query("SELECT * FROM budgets WHERE category = :category LIMIT 1")
+    suspend fun getByCategory(category: String): Budget?
+
     @Query("DELETE FROM budgets")
     suspend fun clearAll()
 }

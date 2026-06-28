@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.smartbudget_asistent_financiar.data.local.entity.Receipt
 import com.example.smartbudget_asistent_financiar.data.repository.ReceiptRepository
+import com.example.smartbudget_asistent_financiar.util.BudgetAlertManager
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -34,7 +35,8 @@ sealed class ScanUiState {
 
 @HiltViewModel
 class ScanViewModel @Inject constructor(
-    private val repository: ReceiptRepository
+    private val repository: ReceiptRepository,
+    private val alertManager: BudgetAlertManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ScanUiState>(ScanUiState.Idle)
@@ -99,6 +101,7 @@ class ScanViewModel @Inject constructor(
                     rawOcrText = s.rawText
                 )
             )
+            alertManager.checkAndNotify(s.category)
             onSaved(id)
         }
     }

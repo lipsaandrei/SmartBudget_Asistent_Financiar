@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">SmartBudget</string>
+
+    <!-- Auth -->
+    <string name="auth_subtitle">Asistentul tău financiar personal</string>
+    <string name="auth_google">Continuă cu Google</string>
+    <string name="auth_guest">Continuă fără cont</string>
+
+    <!-- Common actions -->
+    <string name="action_apply">Aplică</string>
+    <string name="action_save">Salvează</string>
+    <string name="action_delete">Șterge</string>
+    <string name="action_cancel">Anulează</string>
+    <string name="action_sign_out">Deconectare</string>
+    <string name="action_sign_in_google">Conectare cu Google</string>
+    <string name="action_grant_permission">Acordă Permisiunea</string>
+    <string name="action_retake">Rescana</string>
+
+    <!-- Common labels -->
+    <string name="label_language">Limbă</string>
+    <string name="label_merchant">Comerciant</string>
+    <string name="label_category">Categorie</string>
+    <string name="label_date">Dată</string>
+    <string name="label_scanned">Scanat</string>
+    <string name="label_raw_ocr">Text OCR brut</string>
+    <string name="label_amount">Sumă (%1$s)</string>
+    <string name="label_amount_ron">Sumă (RON)</string>
+    <string name="label_no_limit">Fără limită</string>
+    <string name="label_spent">Cheltuit: %.2f RON</string>
+
+    <!-- Home -->
+    <string name="home_this_month">Luna Aceasta</string>
+    <string name="home_start_scanning">Scanează bonuri pentru a urmări cheltuielile</string>
+    <string name="home_vs_last_month">%1$s%2$d%% față de luna trecută (%3$.2f RON)</string>
+    <string name="home_no_receipts">Niciun bon — apasă Scanare pentru a adăuga primul.</string>
+    <string name="section_spending">Cheltuieli pe Categorii</string>
+    <string name="section_recent_receipts">Bonuri Recente</string>
+
+    <!-- Budget -->
+    <string name="budget_title">Limite Buget Lunar</string>
+    <string name="budget_hint">Lasă gol pentru a elimina o limită.</string>
+    <string name="budget_alerts_title">Alerte Buget</string>
+    <string name="alert_over_budget">%1$s: %2$.0f%% depășit bugetul</string>
+    <string name="alert_budget_used">%1$s: %2$.0f%% din buget folosit</string>
+
+    <!-- Receipts -->
+    <string name="receipts_empty_title">Niciun bon încă</string>
+    <string name="receipts_empty_body">Scanează un bon pentru a începe</string>
+
+    <!-- Receipt Detail -->
+    <string name="receipt_title">Bon</string>
+    <string name="receipt_edit_title">Editează Bonul</string>
+    <string name="receipt_not_found">Bonul nu a fost găsit.</string>
+    <string name="receipt_delete_title">Șterge Bonul</string>
+    <string name="receipt_delete_message">Acest bon va fi șters permanent.</string>
+
+    <!-- Scan -->
+    <string name="scan_permission_rationale">Permisiunea camerei este necesară pentru a scana bonuri</string>
+    <string name="scan_button">Scanează Bon</string>
+    <string name="scan_review_title">Verifică Bonul</string>
+
+    <!-- Chat -->
+    <string name="chat_title">Asistent AI</string>
+    <string name="chat_empty_title">Întreabă-mă orice despre cheltuielile tale</string>
+    <string name="chat_empty_hint">ex. \"Cât am cheltuit pe mâncare?\" sau \"Am depășit bugetul?\"</string>
+    <string name="chat_input_hint">Întreabă despre finanțele tale…</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Acasă</string>
+    <string name="nav_scan">Scanare</string>
+    <string name="nav_receipts">Bonuri</string>
+    <string name="nav_chat">Chat AI</string>
+</resources>

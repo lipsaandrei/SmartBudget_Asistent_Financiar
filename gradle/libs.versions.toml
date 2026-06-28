@@ -2,6 +2,8 @@
 agp = "9.1.0"
 kotlin = "2.2.10"
 ksp = "2.2.10-2.0.2"
+generativeai = "0.9.0"
+okhttp = "4.12.0"
 firebaseBom = "33.7.0"
 googleServicesAuth = "21.3.0"
 coroutinesPlayServices = "1.8.1"
@@ -68,6 +70,8 @@ firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-fires
 # Google
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "googleServicesAuth" }
 kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
+generativeai = { group = "com.google.ai.client.generativeai", name = "generativeai", version.ref = "generativeai" }
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

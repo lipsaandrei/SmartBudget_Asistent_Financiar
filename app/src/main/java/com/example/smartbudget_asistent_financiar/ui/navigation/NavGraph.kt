@@ -1,10 +1,12 @@
 package com.example.smartbudget_asistent_financiar.ui.navigation
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -14,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -22,17 +25,24 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.smartbudget_asistent_financiar.R
+import com.example.smartbudget_asistent_financiar.ui.screens.chat.ChatScreen
 import com.example.smartbudget_asistent_financiar.ui.screens.detail.ReceiptDetailScreen
 import com.example.smartbudget_asistent_financiar.ui.screens.home.HomeScreen
 import com.example.smartbudget_asistent_financiar.ui.screens.receipts.ReceiptListScreen
 import com.example.smartbudget_asistent_financiar.ui.screens.scan.ScanScreen
 
-private data class BottomNavItem(val screen: Screen, val label: String, val icon: ImageVector)
+private data class BottomNavItem(
+    val screen: Screen,
+    @StringRes val labelRes: Int,
+    val icon: ImageVector
+)
 
 private val bottomNavItems = listOf(
-    BottomNavItem(Screen.Home, "Home", Icons.Default.Home),
-    BottomNavItem(Screen.Scan, "Scan", Icons.Default.PhotoCamera),
-    BottomNavItem(Screen.ReceiptList, "Receipts", Icons.AutoMirrored.Filled.List),
+    BottomNavItem(Screen.Home, R.string.nav_home, Icons.Default.Home),
+    BottomNavItem(Screen.Scan, R.string.nav_scan, Icons.Default.PhotoCamera),
+    BottomNavItem(Screen.ReceiptList, R.string.nav_receipts, Icons.AutoMirrored.Filled.List),
+    BottomNavItem(Screen.Chat, R.string.nav_chat, Icons.Default.SmartToy),
 )
 
 @Composable
@@ -48,9 +58,10 @@ fun SmartBudgetNavGraph(onSignOut: () -> Unit = {}) {
             if (showBottomBar) {
                 NavigationBar {
                     bottomNavItems.forEach { item ->
+                        val label = stringResource(item.labelRes)
                         NavigationBarItem(
-                            icon = { Icon(item.icon, contentDescription = item.label) },
-                            label = { Text(item.label) },
+                            icon = { Icon(item.icon, contentDescription = label) },
+                            label = { Text(label) },
                             selected = currentDestination?.hierarchy?.any { it.route == item.screen.route } == true,
                             onClick = {
                                 navController.navigate(item.screen.route) {
@@ -97,6 +108,10 @@ fun SmartBudgetNavGraph(onSignOut: () -> Unit = {}) {
                         }
                     }
                 )
+            }
+
+            composable(Screen.Chat.route) {
+                ChatScreen()
             }
 
             composable(

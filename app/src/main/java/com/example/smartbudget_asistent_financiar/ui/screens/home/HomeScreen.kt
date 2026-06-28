@@ -20,8 +20,10 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Savings
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -51,12 +53,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.smartbudget_asistent_financiar.R
 import com.example.smartbudget_asistent_financiar.data.local.entity.Receipt
+import com.example.smartbudget_asistent_financiar.ui.components.LanguagePicker
+import com.example.smartbudget_asistent_financiar.ui.language.LanguageViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -81,7 +88,7 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SmartBudget") },
+                title = { Text(stringResource(R.string.app_name)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -90,14 +97,14 @@ fun HomeScreen(
                     IconButton(onClick = { showBudgetSheet = true }) {
                         Icon(
                             Icons.Default.Savings,
-                            contentDescription = "Set budgets",
+                            contentDescription = stringResource(R.string.budget_title),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
                     IconButton(onClick = { showAccountSheet = true }) {
                         Icon(
                             Icons.Default.Person,
-                            contentDescription = "Account",
+                            contentDescription = null,
                             tint = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                     }
@@ -113,15 +120,16 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             contentPadding = androidx.compose.foundation.layout.PaddingValues(vertical = 16.dp)
         ) {
+            item { SpendingAlertsCard(state.categoryBreakdown) }
             item { MonthSummaryCard(state.thisMonthTotal, state.lastMonthTotal) }
 
             if (state.categoryBreakdown.isNotEmpty()) {
-                item { SectionLabel("Spending by Category") }
+                item { SectionLabel(stringResource(R.string.section_spending)) }
                 item { CategoryBreakdownCard(state.categoryBreakdown) }
             }
 
             if (state.recentReceipts.isNotEmpty()) {
-                item { SectionLabel("Recent Receipts") }
+                item { SectionLabel(stringResource(R.string.section_recent_receipts)) }
                 items(state.recentReceipts, key = { it.id }) { receipt ->
                     RecentReceiptRow(receipt = receipt, onClick = { onReceiptClick(receipt.id) })
                 }
@@ -130,7 +138,7 @@ fun HomeScreen(
             if (state.recentReceipts.isEmpty()) {
                 item {
                     Text(
-                        text = "No receipts yet — tap Scan to add your first one.",
+                        text = stringResource(R.string.home_no_receipts),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 16.dp)
@@ -169,7 +177,6 @@ private fun BudgetSheet(
     val budgets by viewModel.budgets.collectAsState()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    // Local draft: category → amount string; initialised from persisted budgets
     val drafts = remember(budgets) {
         androidx.compose.runtime.snapshots.SnapshotStateMap<String, String>().also { map ->
             allCategories.forEach { cat ->
@@ -187,9 +194,9 @@ private fun BudgetSheet(
                 .padding(bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            Text("Monthly Budget Limits", style = MaterialTheme.typography.titleLarge)
+            Text(stringResource(R.string.budget_title), style = MaterialTheme.typography.titleLarge)
             Text(
-                "Leave empty to remove a limit.",
+                stringResource(R.string.budget_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -217,7 +224,7 @@ private fun BudgetSheet(
                     onDismiss()
                 },
                 modifier = Modifier.fillMaxWidth()
-            ) { Text("Apply") }
+            ) { Text(stringResource(R.string.action_apply)) }
         }
     }
 }
@@ -238,7 +245,7 @@ private fun BudgetCategoryRow(
             Text(category, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
             if (spent > 0) {
                 Text(
-                    "Spent: %.2f RON".format(spent),
+                    stringResource(R.string.label_spent, spent),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -247,12 +254,70 @@ private fun BudgetCategoryRow(
         OutlinedTextField(
             value = draft,
             onValueChange = onDraftChange,
-            placeholder = { Text("No limit") },
+            placeholder = { Text(stringResource(R.string.label_no_limit)) },
             suffix = { Text("RON") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             modifier = Modifier.weight(1f)
         )
+    }
+}
+
+private data class BudgetAlert(val category: String, val ratio: Double, val exceeded: Boolean)
+
+@Composable
+private fun SpendingAlertsCard(breakdown: List<CategorySpend>) {
+    val alerts = breakdown.mapNotNull { item ->
+        val budget = item.budget?.takeIf { it > 0 } ?: return@mapNotNull null
+        val ratio = item.amount / budget
+        when {
+            ratio >= 1.0 -> BudgetAlert(item.category, ratio, exceeded = true)
+            ratio >= 0.75 -> BudgetAlert(item.category, ratio, exceeded = false)
+            else -> null
+        }
+    }
+    if (alerts.isEmpty()) return
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.5f)
+        )
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.budget_alerts_title),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onErrorContainer
+            )
+            alerts.forEach { budgetAlert ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = if (budgetAlert.exceeded) Icons.Default.Error else Icons.Default.Warning,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp),
+                        tint = if (budgetAlert.exceeded) MaterialTheme.colorScheme.error
+                               else MaterialTheme.colorScheme.tertiary
+                    )
+                    Text(
+                        text = if (budgetAlert.exceeded)
+                            stringResource(R.string.alert_over_budget, budgetAlert.category, (budgetAlert.ratio - 1) * 100)
+                        else
+                            stringResource(R.string.alert_budget_used, budgetAlert.category, budgetAlert.ratio * 100),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (budgetAlert.exceeded) MaterialTheme.colorScheme.error
+                                else MaterialTheme.colorScheme.tertiary
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -267,7 +332,7 @@ private fun MonthSummaryCard(thisMonth: Double, lastMonth: Double) {
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(
-                text = "This Month",
+                text = stringResource(R.string.home_this_month),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -284,14 +349,14 @@ private fun MonthSummaryCard(thisMonth: Double, lastMonth: Double) {
                 val color = if (diff <= 0) MaterialTheme.colorScheme.tertiary
                             else MaterialTheme.colorScheme.error
                 Text(
-                    text = "$sign${abs(pct)}% vs last month (%.2f RON)".format(abs(diff)),
+                    text = stringResource(R.string.home_vs_last_month, sign, abs(pct), abs(diff)),
                     style = MaterialTheme.typography.bodySmall,
                     color = color
                 )
             } else if (lastMonth == 0.0 && thisMonth == 0.0) {
                 Spacer(modifier = Modifier.height(6.dp))
                 Text(
-                    text = "Start scanning to track your spending",
+                    text = stringResource(R.string.home_start_scanning),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                 )
@@ -400,9 +465,12 @@ private fun RecentReceiptRow(receipt: Receipt, onClick: () -> Unit) {
 private fun AccountSheet(
     onDismiss: () -> Unit,
     onSignOut: () -> Unit,
-    viewModel: AccountViewModel = hiltViewModel()
+    viewModel: AccountViewModel = hiltViewModel(),
+    languageViewModel: LanguageViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val selectedLanguage by languageViewModel.selectedLanguage.collectAsState()
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         Column(
@@ -413,7 +481,6 @@ private fun AccountSheet(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Avatar circle with initials
             Box(
                 modifier = Modifier
                     .size(72.dp)
@@ -454,12 +521,23 @@ private fun AccountSheet(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
+            LanguagePicker(
+                selectedLanguage = selectedLanguage,
+                onLanguageSelected = {
+                    languageViewModel.setLanguage(it)
+                    (context as? android.app.Activity)?.recreate()
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+
             if (viewModel.isGuest) {
                 Button(
                     onClick = onSignOut,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Sign in with Google")
+                    Text(stringResource(R.string.action_sign_in_google))
                 }
             } else {
                 OutlinedButton(
@@ -474,7 +552,7 @@ private fun AccountSheet(
                         contentDescription = null,
                         modifier = Modifier.padding(end = 8.dp)
                     )
-                    Text("Sign out")
+                    Text(stringResource(R.string.action_sign_out))
                 }
             }
         }
