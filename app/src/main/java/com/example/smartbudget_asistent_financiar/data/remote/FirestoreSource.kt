@@ -8,8 +8,6 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// ─── DTOs (no Room annotations → safe for Firestore deserialization) ─────────
-
 data class ReceiptDto(
     val id: Long = 0,
     val merchant: String = "",
@@ -34,8 +32,6 @@ data class BudgetDto(
 fun Receipt.toDto() = ReceiptDto(id, merchant, totalAmount, currency, category, receiptDate, scannedAt, rawOcrText)
 fun Budget.toDto() = BudgetDto(category, limitAmount, currency)
 
-// ─── Source ───────────────────────────────────────────────────────────────────
-
 @Singleton
 class FirestoreSource @Inject constructor(
     private val auth: FirebaseAuth,
@@ -51,8 +47,6 @@ class FirestoreSource @Inject constructor(
         firestore.collection("users").document(it).collection("budgets")
     }
 
-    // ── Receipts ──────────────────────────────────────────────────────────────
-
     suspend fun uploadReceipt(receipt: Receipt) {
         receiptsCol?.document(receipt.id.toString())?.set(receipt.toDto())?.await()
     }
@@ -66,8 +60,6 @@ class FirestoreSource @Inject constructor(
             ?.documents
             ?.mapNotNull { it.toObject(ReceiptDto::class.java)?.toEntity() }
             ?: emptyList()
-
-    // ── Budgets ───────────────────────────────────────────────────────────────
 
     suspend fun uploadBudget(budget: Budget) {
         budgetsCol?.document(budget.category)?.set(budget.toDto())?.await()

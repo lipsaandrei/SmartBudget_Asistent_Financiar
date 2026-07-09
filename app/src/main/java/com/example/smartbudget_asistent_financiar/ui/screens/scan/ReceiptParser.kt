@@ -37,7 +37,6 @@ object ReceiptParser {
             .maxOrNull() ?: 0.0
     }
 
-    // Only matches numbers with exactly 2 decimal places (e.g. 45,90 or 45.90)
     private fun extractDecimalNumbers(line: String): List<Double> =
         Regex("""(\d{1,6})[,.](\d{2})""").findAll(line)
             .mapNotNull { "${it.groupValues[1]}.${it.groupValues[2]}".toDoubleOrNull() }
@@ -58,18 +57,31 @@ object ReceiptParser {
 
     private fun containsAny(text: String, vararg keywords: String) = keywords.any { text.contains(it) }
 
+    // A parsed date is trusted only if it is plausible for a receipt: not in the
+    // future and at most one year old. OCR noise (CIF, phone numbers, bon fiscal
+    // ids) can match the pattern, so implausible candidates are skipped and the
+    // caller falls back to the scan time.
     private fun extractDate(lines: List<String>): Long? {
         val regex = Regex("""(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})""")
+        val now = System.currentTimeMillis()
+        val oneYearAgo = now - 366L * 24 * 60 * 60 * 1000
+        val endOfToday = now + 24L * 60 * 60 * 1000
         for (line in lines) {
-            val match = regex.find(line) ?: continue
-            val (day, month, year) = match.destructured
-            val fullYear = if (year.length == 2) 2000 + year.toInt() else year.toInt()
-            return try {
-                Calendar.getInstance().apply {
-                    set(fullYear, month.toInt() - 1, day.toInt(), 0, 0, 0)
-                    set(Calendar.MILLISECOND, 0)
-                }.timeInMillis
-            } catch (_: Exception) { null }
+            for (match in regex.findAll(line)) {
+                val (dayStr, monthStr, yearStr) = match.destructured
+                val day = dayStr.toInt()
+                val month = monthStr.toInt()
+                if (day !in 1..31 || month !in 1..12) continue
+                val fullYear = if (yearStr.length == 2) 2000 + yearStr.toInt() else yearStr.toInt()
+                val millis = try {
+                    Calendar.getInstance().apply {
+                        isLenient = false
+                        clear()
+                        set(fullYear, month - 1, day)
+                    }.timeInMillis
+                } catch (_: Exception) { continue }
+                if (millis in oneYearAgo..endOfToday) return millis
+            }
         }
         return null
     }

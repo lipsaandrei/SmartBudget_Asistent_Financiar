@@ -26,5 +26,5 @@ interface BudgetDao {
     suspend fun getByCategory(category: String): Budget?
 
     @Query("DELETE FROM budgets")
-    suspend fun clearAll()
+    suspend fun deleteAll()
 }

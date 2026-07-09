@@ -17,7 +17,7 @@ import javax.inject.Inject
 data class CategorySpend(
     val category: String,
     val amount: Double,
-    val fraction: Float,      // relative to top spender — used when no budget set
+    val fraction: Float,
     val budget: Double? = null
 )
 

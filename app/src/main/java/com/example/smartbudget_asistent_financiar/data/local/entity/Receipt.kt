@@ -11,7 +11,7 @@ data class Receipt(
     val totalAmount: Double,
     val currency: String = "RON",
     val category: String = "Uncategorized",
-    val receiptDate: Long,       // date on the receipt (epoch ms)
-    val scannedAt: Long,         // when the user scanned it (epoch ms)
-    val rawOcrText: String = ""  // full text captured by ML Kit
+    val receiptDate: Long,
+    val scannedAt: Long,
+    val rawOcrText: String = ""
 )

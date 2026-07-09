@@ -22,15 +22,6 @@ interface ReceiptDao {
     @Query("SELECT * FROM receipts WHERE id = :id")
     suspend fun getById(id: Long): Receipt?
 
-    @Query("SELECT * FROM receipts WHERE receiptDate BETWEEN :from AND :to ORDER BY receiptDate DESC")
-    fun getByDateRange(from: Long, to: Long): Flow<List<Receipt>>
-
-    @Query("SELECT * FROM receipts WHERE category = :category ORDER BY receiptDate DESC")
-    fun getByCategory(category: String): Flow<List<Receipt>>
-
-    @Query("SELECT SUM(totalAmount) FROM receipts WHERE receiptDate BETWEEN :from AND :to")
-    suspend fun getTotalInRange(from: Long, to: Long): Double?
-
     @Query("SELECT SUM(totalAmount) FROM receipts WHERE category = :category AND receiptDate BETWEEN :from AND :to")
     suspend fun getCategoryTotalInRange(category: String, from: Long, to: Long): Double?
 
@@ -38,5 +29,5 @@ interface ReceiptDao {
     suspend fun getAllReceiptsOnce(): List<Receipt>
 
     @Query("DELETE FROM receipts")
-    suspend fun clearAll()
+    suspend fun deleteAll()
 }

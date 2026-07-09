@@ -50,7 +50,7 @@ class ChatViewModel @Inject constructor(
         .readTimeout(60, TimeUnit.SECONDS)
         .build()
 
-    private val apiHistory = mutableListOf<Pair<String, String>>() // role to text
+    private val apiHistory = mutableListOf<Pair<String, String>>()
     private var cachedFinancialContext: String? = null
 
     fun sendMessage(userText: String) {
@@ -134,7 +134,6 @@ class ChatViewModel @Inject constructor(
             .getJSONObject("content")
             .getJSONArray("parts")
 
-        // Gemini 2.5 Flash includes thinking tokens (thought=true) — skip them
         buildString {
             for (i in 0 until parts.length()) {
                 val part = parts.getJSONObject(i)

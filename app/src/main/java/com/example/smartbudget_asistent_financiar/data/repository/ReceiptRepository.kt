@@ -14,10 +14,6 @@ class ReceiptRepository @Inject constructor(
 ) {
     fun getAllReceipts(): Flow<List<Receipt>> = dao.getAllReceipts()
 
-    fun getByDateRange(from: Long, to: Long): Flow<List<Receipt>> = dao.getByDateRange(from, to)
-
-    fun getByCategory(category: String): Flow<List<Receipt>> = dao.getByCategory(category)
-
     suspend fun getById(id: Long): Receipt? = dao.getById(id)
 
     suspend fun insert(receipt: Receipt): Long {
@@ -35,8 +31,6 @@ class ReceiptRepository @Inject constructor(
         dao.delete(receipt)
         runCatching { firestore.deleteReceipt(receipt.id) }
     }
-
-    suspend fun getTotalInRange(from: Long, to: Long): Double = dao.getTotalInRange(from, to) ?: 0.0
 
     suspend fun getCategoryTotalInRange(category: String, from: Long, to: Long): Double =
         dao.getCategoryTotalInRange(category, from, to) ?: 0.0

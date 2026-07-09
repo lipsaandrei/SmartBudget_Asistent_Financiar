@@ -13,6 +13,8 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -42,6 +46,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -63,6 +69,9 @@ import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.smartbudget_asistent_financiar.R
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,6 +123,7 @@ fun ScanScreen(
             onMerchantChange = viewModel::updateMerchant,
             onAmountChange = viewModel::updateAmount,
             onCategoryChange = viewModel::updateCategory,
+            onDateChange = viewModel::updateDate,
             onSave = { viewModel.save(onReceiptSaved) },
             onDismiss = viewModel::reset
         )
@@ -246,11 +256,14 @@ private fun ReviewBottomSheet(
     onMerchantChange: (String) -> Unit,
     onAmountChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
+    onDateChange: (Long) -> Unit,
     onSave: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var dropdownExpanded by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val dateFormatter = remember { SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()) }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -280,6 +293,22 @@ private fun ReviewBottomSheet(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+            )
+
+            val dateFieldInteraction = remember { MutableInteractionSource() }
+            LaunchedEffect(dateFieldInteraction) {
+                dateFieldInteraction.interactions.collect {
+                    if (it is PressInteraction.Release) showDatePicker = true
+                }
+            }
+            OutlinedTextField(
+                value = dateFormatter.format(Date(review.date)),
+                onValueChange = {},
+                readOnly = true,
+                label = { Text(stringResource(R.string.label_date)) },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true,
+                interactionSource = dateFieldInteraction
             )
 
             ExposedDropdownMenuBox(
@@ -323,6 +352,26 @@ private fun ReviewBottomSheet(
                     Text(stringResource(R.string.action_save))
                 }
             }
+        }
+    }
+
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState(initialSelectedDateMillis = review.date)
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let(onDateChange)
+                    showDatePicker = false
+                }) { Text(stringResource(android.R.string.ok)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
         }
     }
 }

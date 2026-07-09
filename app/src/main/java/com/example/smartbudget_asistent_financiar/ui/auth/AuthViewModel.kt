@@ -60,10 +60,8 @@ class AuthViewModel @Inject constructor(
 
     fun signOut() {
         viewModelScope.launch {
-            if (auth.currentUser != null) {
-                runCatching { syncManager.clearLocalData() }
-                auth.signOut()
-            }
+            runCatching { syncManager.clearLocalData() }
+            auth.signOut()
             _authState.value = AuthState.SignedOut
         }
     }

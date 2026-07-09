@@ -20,26 +20,33 @@ class SyncManager @Inject constructor(
         }
     }
 
+    suspend fun clearLocalData() {
+        receiptDao.deleteAll()
+        budgetDao.deleteAll()
+    }
+
+    // Room is cleared on sign-out, so anything local at sign-in time is guest data.
+    // Guest data migrates to the account only on its first sign-in (empty cloud);
+    // an account that already has cloud data replaces whatever the guest scanned.
     private suspend fun syncReceipts() {
-        val local = receiptDao.getAllReceiptsOnce()
+        val guestReceipts = receiptDao.getAllReceiptsOnce()
         val remote = firestoreSource.fetchAllReceipts()
-        when {
-            remote.isEmpty() && local.isNotEmpty() -> local.forEach { firestoreSource.uploadReceipt(it) }
-            remote.isNotEmpty() -> remote.forEach { receiptDao.insert(it) }
+        if (remote.isEmpty()) {
+            guestReceipts.forEach { firestoreSource.uploadReceipt(it) }
+        } else {
+            receiptDao.deleteAll()
+            remote.forEach { receiptDao.insert(it) }
         }
     }
 
     private suspend fun syncBudgets() {
-        val local = budgetDao.getAllBudgetsOnce()
+        val guestBudgets = budgetDao.getAllBudgetsOnce()
         val remote = firestoreSource.fetchAllBudgets()
-        when {
-            remote.isEmpty() && local.isNotEmpty() -> local.forEach { firestoreSource.uploadBudget(it) }
-            remote.isNotEmpty() -> remote.forEach { budgetDao.upsert(it) }
+        if (remote.isEmpty()) {
+            guestBudgets.forEach { firestoreSource.uploadBudget(it) }
+        } else {
+            budgetDao.deleteAll()
+            remote.forEach { budgetDao.upsert(it) }
         }
-    }
-
-    suspend fun clearLocalData() {
-        receiptDao.clearAll()
-        budgetDao.clearAll()
     }
 }

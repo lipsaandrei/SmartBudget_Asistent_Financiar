@@ -86,6 +86,11 @@ class ScanViewModel @Inject constructor(
         _uiState.value = s.copy(category = value)
     }
 
+    fun updateDate(value: Long) {
+        val s = _uiState.value as? ScanUiState.Review ?: return
+        _uiState.value = s.copy(date = value)
+    }
+
     fun save(onSaved: (Long) -> Unit) {
         val s = _uiState.value as? ScanUiState.Review ?: return
         val amount = s.amount.replace(",", ".").toDoubleOrNull() ?: 0.0

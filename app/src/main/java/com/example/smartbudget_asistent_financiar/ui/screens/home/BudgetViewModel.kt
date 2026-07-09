@@ -17,7 +17,6 @@ class BudgetViewModel @Inject constructor(
     private val repository: BudgetRepository
 ) : ViewModel() {
 
-    // category → limit amount
     val budgets: StateFlow<Map<String, Double>> = repository.getAllBudgets()
         .map { list -> list.associate { it.category to it.limitAmount } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyMap())
